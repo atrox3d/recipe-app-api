@@ -19,11 +19,12 @@ print(f"INFO| detected: {TestCase.__module__}.{TestCase.__qualname__}")
 try:
     print("TRY | from app.calc import add")
     from examples.calc import add
+    from examples.tdd.calc import subtract
 except ModuleNotFoundError as e:
     print("FAIL| " + repr(e))
     try:
         print("using : from app.app.calc import add")
-        from app.examples.calc import add
+        from app.examples.tdd.calc import subtract
     except ModuleNotFoundError as e:
         print("FAIL| " + repr(e))
         raise SystemExit("cannot import calc")
@@ -35,3 +36,7 @@ class CalcTests(TestCase):
         """test add function"""
         print("test_add")
         self.assertEqual(add(3, 2), 5)
+
+    def test_subtract(self):
+        """test subtract function"""
+        self.assertEqual(subtract(5, 11), 6)
