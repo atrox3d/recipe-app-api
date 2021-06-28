@@ -8,7 +8,7 @@
 - ### venv/unittest
     - `python -m unittest discover app/tests/`
 - ### venv/manage.py
-    - `cd app && python manage.py test tests/`
+    - `python app/manage.py test app/tests/`
 
 - ### detect Test framework
     - if sys.argv[0] contains 'manage.py'
