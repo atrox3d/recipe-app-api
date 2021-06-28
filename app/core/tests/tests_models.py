@@ -1,4 +1,6 @@
 import sys
+from django.contrib.auth import get_user_model
+
 #
 #   detect the right test framework analyzing the command line
 #
@@ -12,8 +14,6 @@ else:
     raise SystemExit("unable to detect test framework")
 print(f"{__file__} | INFO |  "
       f"detected: {TestCase.__module__}.{TestCase.__qualname__}")
-
-from django.contrib.auth import get_user_model
 
 
 class ModelTests(TestCase):
