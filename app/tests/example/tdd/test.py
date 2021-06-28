@@ -24,6 +24,7 @@ except ModuleNotFoundError as e:
     print("FAIL| " + repr(e))
     try:
         print("using : from app.app.calc import add")
+        from app.examples.calc import add
         from app.examples.tdd.calc import subtract
     except ModuleNotFoundError as e:
         print("FAIL| " + repr(e))
