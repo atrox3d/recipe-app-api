@@ -3,7 +3,7 @@
 ## tests:
 
 - ### docker
-    - `docker-compose run app sh -c "python manage.py test tests/ && flake8"`
+    - `docker-compose run app sh -c "python manage.py test examples/ && flake8"`
 
       (nb flake8 currently not working with python 3.9)
 - ### venv/unittest
