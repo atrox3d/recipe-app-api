@@ -1,5 +1,5 @@
 #!/bin/bash
-ALL_TEST_DIRS=(examples/ core/)
+ALL_TEST_DIRS=(examples/ core/ app/)
 
 if [ $# -ge 1 ]
 then
@@ -10,5 +10,5 @@ fi
 DIR_LIST="[ $(IFS=, ;echo "${TEST_DIRS[*]}") ]"
 DIR_LIST="${DIR_LIST//,/, }"
 echo "TEST_DIRS: $DIR_LIST"
-echo docker-compose run app sh -c "python manage.py test ${TEST_DIRS} && echo \"flake8:\" && flake8 --count"
-docker-compose run app sh -c "python manage.py test ${TEST_DIRS} && echo \"flake8:\" && flake8 --count"
+echo docker-compose run app sh -c "python manage.py test ${TEST_DIRS[*]};echo \"flake8:\" && flake8 --count"
+docker-compose run app sh -c "python manage.py test ${TEST_DIRS[*]};echo \"flake8:\" && flake8 --count"
