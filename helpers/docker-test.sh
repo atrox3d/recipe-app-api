@@ -1,5 +1,5 @@
 #!/bin/bash
-ALL_TEST_DIRS=(examples/ core/ app/)
+ALL_TEST_DIRS=(examples core app)
 
 if [ $# -ge 1 ]
 then
