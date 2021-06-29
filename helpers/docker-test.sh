@@ -6,11 +6,14 @@ TEST_DIRS=("${DEFAULT_DIRS[@]}")
 VERBOSE=""
 FLAKE8=false
 ONLY_FLAKE8=false
+COMMAND=false
 
 SYNTAX=(
-    "${BASH_SOURCE[0]} [ -a -d -D \"dir1 dir2 ...\" -f -F -v LEVEL  ] [ dir1 dir2 ... ]"
+    "${BASH_SOURCE[0]} [ -a -d -c -C \"command\" -D \"dir1 dir2 ...\" -f -F -v LEVEL  ] [ dir1 dir2 ... ]"
     "-a: all test dirs"
     "-d: default test dirs"
+    "-c: clear terminal"
+    "-C: execute another command"
     "-D: use \"dir1 dir2 ...\""
     "-h: this help"
     "-f: enable flake8"
@@ -20,11 +23,17 @@ SYNTAX=(
 )
 
 
-while getopts ":afFhD:dv:" opt
+while getopts ":acC:D:dfFhv:" opt
 do
 		case $opt in
 			a)
                 TEST_DIRS=("${ALL_TEST_DIRS[@]}")
+			;;
+			c)
+                clear
+			;;
+			C)
+                COMMAND="${OPTARG}"
 			;;
 			d)
                 TEST_DIRS=("${DEFAULT_DIRS[@]}")
@@ -77,17 +86,26 @@ echo "TEST_DIRS: $DIR_LIST"
 echo "FLAKE8   : $FLAKE8"
 echo "ARGS     : ${*}"
 
+[ "${COMMAND}" != "false" ] && {
+    echo docker-compose run app sh -c "${COMMAND}"
+    docker-compose run app sh -c "${COMMAND}"
+    exit
+}
+
 
 [ "${ONLY_FLAKE8}" == "true" ] && {
     echo docker-compose run app sh -c "\"flake8:\"; flake8 --count"
+    echo "----------------------------------------------------------------------"
     docker-compose run app sh -c "echo \"flake8:\"; flake8 --count"
     exit
 }
 
 [ "${FLAKE8}" == "true" ] && {
     echo docker-compose run app sh -c "python manage.py test ${VERBOSE} ${TEST_DIRS[*]};echo \"flake8:\"; flake8 --count"
+    echo "----------------------------------------------------------------------"
     docker-compose run app sh -c "python manage.py test ${VERBOSE} ${TEST_DIRS[*]};echo \"flake8:\"; flake8 --count"
 } || {
     echo docker-compose run app sh -c "python manage.py test ${VERBOSE} ${TEST_DIRS[*]}"
+    echo "----------------------------------------------------------------------"
     docker-compose run app sh -c "python manage.py test ${VERBOSE} ${TEST_DIRS[*]}"
 }
