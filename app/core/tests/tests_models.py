@@ -20,7 +20,7 @@ class ModelTests(TestCase):
 
     def test_create_user_with_email_succesful(self):
         """test creating a new user with an email is succesful"""
-        print("TEST | test_create_user_with_email_succesful()")
+        # print("TEST | test_create_user_with_email_succesful()")
 
         email = "test@londonappdev.com"
         password = "Testpass123"
@@ -34,7 +34,7 @@ class ModelTests(TestCase):
 
     def test_new_user_email_normalized(self):
         """Test that the email of a new user is normalized"""
-        print("TEST | test_new_user_email_normalized()")
+        # print("TEST | test_new_user_email_normalized()")
 
         email = "test@LONDONAPPDEV.COM"
         password = "Testpass123"
@@ -44,3 +44,8 @@ class ModelTests(TestCase):
         )
 
         self.assertEqual(user.email, email.lower())
+
+    def test_new_user_invalid_email(self):
+        """Test creating new user with no email raises an error"""
+        with self.assertRaises(ValueError):
+            get_user_model().objects.create_user(None, 'test123')
