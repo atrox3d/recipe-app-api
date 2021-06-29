@@ -134,18 +134,19 @@ echo "ARGS     : ${*}"
     exit
 }
 
-[ "${FLAKE8}" == "true" ] && {
+if [ "${FLAKE8}" == "true" ]
+then
     #
     #   run ALSO flake8
     #
     echo docker-compose run app sh -c "python manage.py test ${VERBOSE} ${TEST_DIRS[*]};echo \"flake8:\"; flake8 --count"
     echo "----------------------------------------------------------------------"
     docker-compose run app sh -c "python manage.py test ${VERBOSE} ${TEST_DIRS[*]};echo \"flake8:\"; flake8 --count"
-} || {
+else
     #
     #   run ONLY tests
     #
     echo docker-compose run app sh -c "python manage.py test ${VERBOSE} ${TEST_DIRS[*]}"
     echo "----------------------------------------------------------------------"
     docker-compose run app sh -c "python manage.py test ${VERBOSE} ${TEST_DIRS[*]}"
-}
+fi
