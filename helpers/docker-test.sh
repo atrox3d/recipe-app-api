@@ -1,5 +1,7 @@
 #!/bin/bash
-
+#
+#   setup globals
+#
 ALL_TEST_DIRS=(examples core app)
 DEFAULT_DIRS=(core app)
 TEST_DIRS=("${DEFAULT_DIRS[@]}")
@@ -21,29 +23,51 @@ SYNTAX=(
     "-v: set verbose level (0-3)"
     "directories to test"
 )
-
-
+#
+#   parse command line options
+#
 while getopts ":acC:D:dfFhv:" opt
 do
 		case $opt in
+		    #
+		    #   test all directories
+		    #
 			a)
                 TEST_DIRS=("${ALL_TEST_DIRS[@]}")
 			;;
+		    #
+		    #   clear the screen
+		    #
 			c)
                 clear
 			;;
+		    #
+		    #   execute arbitrary command inside docker container
+		    #
 			C)
                 COMMAND="${OPTARG}"
 			;;
+		    #
+		    #   test default directories
+		    #
 			d)
                 TEST_DIRS=("${DEFAULT_DIRS[@]}")
 			;;
+		    #
+		    #   test directories inside provided quoted string
+		    #
 			D)
 				read -r -a TEST_DIRS <<< "$OPTARG"
 			;;
+		    #
+		    #   run ALSO flake8
+		    #
 			f)
 				FLAKE8=true
 			;;
+		    #
+		    #   run ONLY flake8
+		    #
 			F)
 				ONLY_FLAKE8=true
 			;;
@@ -55,6 +79,9 @@ do
                 done
                 exit 0
             ;;
+		    #
+		    #   enable verbose unit test
+		    #
             v)
                 VERBOSE="-v${OPTARG}"
             ;;
@@ -74,25 +101,32 @@ do
 		esac
 done
 shift "$((OPTIND-1))"
-
+#
+#   override everything and use positional parameters as dirs
+#
 if [ $# -ge 1 ]
 then
     TEST_DIRS=("${@}")
 fi
-
+#
+#   show final parameters
+#
 DIR_LIST="[ $(IFS=, ;echo "${TEST_DIRS[*]}") ]"
 DIR_LIST="${DIR_LIST//,/, }"
 echo "TEST_DIRS: $DIR_LIST"
 echo "FLAKE8   : $FLAKE8"
 echo "ARGS     : ${*}"
-
+#
+#   run another command and exit
+#
 [ "${COMMAND}" != "false" ] && {
     echo docker-compose run app sh -c "${COMMAND}"
     docker-compose run app sh -c "${COMMAND}"
     exit
 }
-
-
+#
+#   run ONLY flake8
+#
 [ "${ONLY_FLAKE8}" == "true" ] && {
     echo docker-compose run app sh -c "\"flake8:\"; flake8 --count"
     echo "----------------------------------------------------------------------"
@@ -101,10 +135,16 @@ echo "ARGS     : ${*}"
 }
 
 [ "${FLAKE8}" == "true" ] && {
+    #
+    #   run ALSO flake8
+    #
     echo docker-compose run app sh -c "python manage.py test ${VERBOSE} ${TEST_DIRS[*]};echo \"flake8:\"; flake8 --count"
     echo "----------------------------------------------------------------------"
     docker-compose run app sh -c "python manage.py test ${VERBOSE} ${TEST_DIRS[*]};echo \"flake8:\"; flake8 --count"
 } || {
+    #
+    #   run ONLY tests
+    #
     echo docker-compose run app sh -c "python manage.py test ${VERBOSE} ${TEST_DIRS[*]}"
     echo "----------------------------------------------------------------------"
     docker-compose run app sh -c "python manage.py test ${VERBOSE} ${TEST_DIRS[*]}"
