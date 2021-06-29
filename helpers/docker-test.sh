@@ -5,19 +5,22 @@ DEFAULT_DIRS=(core app)
 TEST_DIRS=("${DEFAULT_DIRS[@]}")
 VERBOSE=""
 FLAKE8=false
+ONLY_FLAKE8=false
 
 SYNTAX=(
-    "${BASH_SOURCE[0]} [ -a -d -D \"dir1 dir2 ...\" -f -v LEVEL  ] [ dir1 dir2 ... ]"
+    "${BASH_SOURCE[0]} [ -a -d -D \"dir1 dir2 ...\" -f -F -v LEVEL  ] [ dir1 dir2 ... ]"
     "-a: all test dirs"
     "-d: default test dirs"
     "-D: use \"dir1 dir2 ...\""
+    "-h: this help"
     "-f: enable flake8"
+    "-F: run only flake8"
     "-v: set verbose level (0-3)"
     "directories to test"
 )
 
 
-while getopts ":afD:dv:" opt
+while getopts ":afFhD:dv:" opt
 do
 		case $opt in
 			a)
@@ -31,6 +34,9 @@ do
 			;;
 			f)
 				FLAKE8=true
+			;;
+			F)
+				ONLY_FLAKE8=true
 			;;
             h)
 				echo "syntax:"
@@ -71,6 +77,12 @@ echo "TEST_DIRS: $DIR_LIST"
 echo "FLAKE8   : $FLAKE8"
 echo "ARGS     : ${*}"
 
+
+[ "${ONLY_FLAKE8}" == "true" ] && {
+    echo docker-compose run app sh -c "\"flake8:\"; flake8 --count"
+    docker-compose run app sh -c "echo \"flake8:\"; flake8 --count"
+    exit
+}
 
 [ "${FLAKE8}" == "true" ] && {
     echo docker-compose run app sh -c "python manage.py test ${VERBOSE} ${TEST_DIRS[*]};echo \"flake8:\"; flake8 --count"
