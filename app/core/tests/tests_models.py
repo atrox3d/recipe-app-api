@@ -1,7 +1,5 @@
-import sys
 from django.contrib.auth import get_user_model
-
-from django.db.models.base import ModelBase
+# from django.db.models.base import ModelBase
 from utils import testing
 
 TestCase = testing.detect_testcase_framework()
@@ -43,4 +41,10 @@ class ModelTests(TestCase):
     def test_create_new_superuser(self):
         """test creating a new superuser"""
 
-        user = get_user_model().objects
+        user = get_user_model().objects.create_superuser(
+            'test@londonappdev.com',
+            'test123'
+        )
+
+        self.assertTrue(user.is_superuser)
+        self.assertTrue(user.is_staff)
