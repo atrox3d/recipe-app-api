@@ -1,5 +1,4 @@
 from django.contrib.auth import get_user_model
-# from django.db.models.base import ModelBase
 from utils import testing
 
 TestCase = testing.detect_testcase_framework()
