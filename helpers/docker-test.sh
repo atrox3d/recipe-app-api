@@ -36,56 +36,49 @@ COMMAND=false
 while getopts ":acC:D:dfFhv:" opt
 do
 		case $opt in
-		    #
-		    #   test all directories
-		    #
 			a)
+    		    #   test all directories
+    		    echo "GETOPTS| -a: test all directories"
                 TEST_DIRS=("${ALL_TEST_DIRS[@]}")
 			;;
-		    #
-		    #   clear the screen
-		    #
 			c)
+    		    #   clear the screen
                 clear
+    		    echo "GETOPTS| -c: clear the screen"
 			;;
-		    #
-		    #   execute arbitrary command inside docker container
-		    #
 			C)
+    		    #   execute arbitrary command inside docker container
+    		    echo "GETOPTS| -C: execute command '$OPTARG' and exit"
                 COMMAND="${OPTARG}"
 			;;
-		    #
-		    #   test default directories
-		    #
 			d)
+		        #   test default directories
+    		    echo "GETOPTS| -d: test default directories"
                 TEST_DIRS=("${DEFAULT_DIRS[@]}")
 			;;
-		    #
-		    #   test directories inside provided quoted string
-		    #
 			D)
+    		    #   test directories inside provided quoted string
+    		    echo "GETOPTS| -S: test directories in '$OPTARG'"
 				read -r -a TEST_DIRS <<< "$OPTARG"
 			;;
-		    #
-		    #   run ALSO flake8
-		    #
 			f)
+    		    #   run ALSO flake8
+    		    echo "GETOPTS| -f: run ALSO flake8"
 				FLAKE8=true
 			;;
-		    #
-		    #   run ONLY flake8
-		    #
 			F)
+       		    #   run ONLY flake8
+    		    echo "GETOPTS| -F: run ONLY flake8"
 				ONLY_FLAKE8=true
 			;;
             h)
+    		    echo "GETOPTS| -h: show syntax and exit"
                 syntax
                 exit 0
             ;;
-		    #
-		    #   enable verbose unit test
-		    #
             v)
+    		    #   enable verbose unit test
+    		    echo "GETOPTS| -v: enable verbose unit test with level: $OPTARG"
                 VERBOSE="-v${OPTARG}"
             ;;
 			\?)
