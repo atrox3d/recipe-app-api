@@ -1,4 +1,25 @@
 #!/bin/bash
+
+function syntax() {
+    local SYNTAX=(
+        "${BASH_SOURCE[0]} [ -a -d -c -C \"command\" -D \"dir1 dir2 ...\" -f -F -v LEVEL  ] [ dir1 dir2 ... ]"
+        "-a: all test dirs"
+        "-d: default test dirs"
+        "-c: clear terminal"
+        "-C: execute another command"
+        "-D: use \"dir1 dir2 ...\""
+        "-h: this help"
+        "-f: enable flake8"
+        "-F: run only flake8"
+        "-v: set verbose level (0-3)"
+        "directories to test (override -a -d -D options)"
+    )
+    echo "syntax:"
+    for line in "${SYNTAX[@]}"
+    do
+        echo "$line"
+    done
+}
 #
 #   setup globals
 #
@@ -10,19 +31,6 @@ FLAKE8=false
 ONLY_FLAKE8=false
 COMMAND=false
 
-SYNTAX=(
-    "${BASH_SOURCE[0]} [ -a -d -c -C \"command\" -D \"dir1 dir2 ...\" -f -F -v LEVEL  ] [ dir1 dir2 ... ]"
-    "-a: all test dirs"
-    "-d: default test dirs"
-    "-c: clear terminal"
-    "-C: execute another command"
-    "-D: use \"dir1 dir2 ...\""
-    "-h: this help"
-    "-f: enable flake8"
-    "-F: run only flake8"
-    "-v: set verbose level (0-3)"
-    "directories to test"
-)
 #
 #   parse command line options
 #
@@ -72,11 +80,7 @@ do
 				ONLY_FLAKE8=true
 			;;
             h)
-				echo "syntax:"
-                for line in "${SYNTAX[@]}"
-                do
-                    echo "$line"
-                done
+                syntax
                 exit 0
             ;;
 		    #
@@ -87,11 +91,7 @@ do
             ;;
 			\?)
 				echo "ERROR | unknown parameter -${OPTARG}"
-				echo "syntax:"
-                for line in "${SYNTAX[@]}"
-                do
-                    echo "$line"
-                done
+                syntax
 				exit 1
 			;;
 			:)
@@ -113,6 +113,7 @@ fi
 #
 DIR_LIST="[ $(IFS=, ;echo "${TEST_DIRS[*]}") ]"
 DIR_LIST="${DIR_LIST//,/, }"
+#
 echo "TEST_DIRS: $DIR_LIST"
 echo "FLAKE8   : $FLAKE8"
 echo "ARGS     : ${*}"
