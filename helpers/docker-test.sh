@@ -30,7 +30,6 @@ VERBOSE=""
 FLAKE8=false
 ONLY_FLAKE8=false
 COMMAND=false
-
 #
 #   parse command line options
 #
@@ -109,45 +108,24 @@ then
     TEST_DIRS=("${@}")
 fi
 #
-#   run another command and exit
+#   create command
 #
-if [ "${COMMAND}" != "false" ]
+if [ "${COMMAND}" == "false" ]
 then
-    echo docker-compose run app sh -c "${COMMAND}"
-    docker-compose run app sh -c "${COMMAND}"
-    exit
+    COMMAND=""
+    if [ "${ONLY_FLAKE8}" == "true" ]
+    then
+        #   run ONLY flake8
+        COMMAND="echo \"flake8:\"; flake8 --count"
+    elif [ "${FLAKE8}" == "true" ]
+    then
+        #   run ALSO flake8
+        COMMAND="python manage.py test ${VERBOSE} ${TEST_DIRS[*]};echo \"flake8:\"; flake8 --count"
+    else
+        #   run ONLY tests
+        COMMAND="python manage.py test ${VERBOSE} ${TEST_DIRS[*]}"
+    fi
 fi
-COMMAND=""
-#
-#   run ONLY flake8
-#
-if [ "${ONLY_FLAKE8}" == "true" ]
-then
-    COMMAND="echo \"flake8:\"; flake8 --count"
-#    echo docker-compose run app sh -c "echo \"flake8:\"; flake8 --count"
-#    echo "----------------------------------------------------------------------"
-#    docker-compose run app sh -c "echo \"flake8:\"; flake8 --count"
-#    exit
-#fi
-#
-#   run ALSO flake8
-#
-elif [ "${FLAKE8}" == "true" ]
-then
-    COMMAND="python manage.py test ${VERBOSE} ${TEST_DIRS[*]};echo \"flake8:\"; flake8 --count"
-#    echo docker-compose run app sh -c "python manage.py test ${VERBOSE} ${TEST_DIRS[*]};echo \"flake8:\"; flake8 --count"
-#    echo "----------------------------------------------------------------------"
-#    docker-compose run app sh -c "python manage.py test ${VERBOSE} ${TEST_DIRS[*]};echo \"flake8:\"; flake8 --count"
-else
-    #
-    #   run ONLY tests
-    #
-    COMMAND="python manage.py test ${VERBOSE} ${TEST_DIRS[*]}"
-#    echo docker-compose run app sh -c "python manage.py test ${VERBOSE} ${TEST_DIRS[*]}"
-#    echo "----------------------------------------------------------------------"
-#    docker-compose run app sh -c "python manage.py test ${VERBOSE} ${TEST_DIRS[*]}"
-fi
-
 #
 #   show final parameters
 #
@@ -157,7 +135,9 @@ DIR_LIST="${DIR_LIST//,/, }"
 echo "TEST_DIRS: $DIR_LIST"
 echo "FLAKE8   : $FLAKE8"
 echo "ARGS     : ${*}"
-
+#
+#   run command
+#
 echo "COMMAND  : "docker-compose run app sh -c "$COMMAND"
 echo "----------------------------------------------------------------------"
 docker-compose run app sh -c "$COMMAND"
