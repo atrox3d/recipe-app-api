@@ -139,6 +139,6 @@ echo "ARGS     : ${*}"
 #
 echo "COMMAND  : "docker-compose run ${DOCKER_RUN_NO_TTY} app sh -c "$COMMAND"
 echo "----------------------------------------------------------------------"
-docker-compose run ${DOCKER_RUN_NO_TTY} app sh -c "$COMMAND"
+docker-compose run --rm ${DOCKER_RUN_NO_TTY} app sh -c "$COMMAND"
 
 
