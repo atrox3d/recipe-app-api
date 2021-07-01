@@ -32,10 +32,12 @@ FLAKE8=false
 ONLY_FLAKE8=false
 COMMAND=false
 DOCKER_RUN_NO_TTY=""
+DOCKER_COMPOSE=true
+DEFAULT_IMAGE=recipe-app-api-no-postgres_app
 #
 #   parse command line options
 #
-while getopts ":acC:D:dfFhTv:" opt
+while getopts ":acC:D:dfFhiTv:" opt
 do
 		case $opt in
 			a)
@@ -78,6 +80,11 @@ do
                 syntax
                 exit 0
             ;;
+            i)
+    		    echo "GETOPTS| -i: execute docker run ${DEFAULT_IMAGE}"
+    		    DOCKER_COMPOSE=false
+    		    IMAGE=${DEFAULT_IMAGE}
+            ;;
             T)
     		    echo "GETOPTS| -T: docker run, disable tty"
                 DOCKER_RUN_NO_TTY="-T"
@@ -93,8 +100,15 @@ do
 				exit 1
 			;;
 			:)
-				echo "ERROR | missing value for parameter -${OPTARG }"
-				exit 2
+#			    if [ "${OPTARG}" == "i" ]
+#			    then
+#                    echo "WARN  | missing IMAGE for parameter -${OPTARG}, using ${DEFAULT_IMAGE}"
+#                    DOCKER_COMPOSE=false
+#                    IMAGE=${DEFAULT_IMAGE}
+#			    else
+                    echo "ERROR | missing value for parameter -${OPTARG}"
+                    exit 2
+#                fi
 			;;
 		esac
 done
@@ -119,7 +133,7 @@ then
     elif [ "${FLAKE8}" == "true" ]
     then
         #   run ALSO flake8
-        COMMAND="python manage.py test ${VERBOSE} ${TEST_DIRS[*]};echo \"flake8:\"; flake8 --count"
+        COMMAND="python manage.py test ${VERBOSE} ${TEST_DIRS[*]};echo 'flake8:'; flake8 --count"
     else
         #   run ONLY tests
         COMMAND="python manage.py test ${VERBOSE} ${TEST_DIRS[*]}"
@@ -137,8 +151,17 @@ echo "ARGS     : ${*}"
 #
 #   run command
 #
-echo "COMMAND  : "docker-compose run ${DOCKER_RUN_NO_TTY} app sh -c "$COMMAND"
+if [ ${DOCKER_COMPOSE} == false ]
+then
+    COMMAND_LINE=(docker         run --rm "${IMAGE}"                 sh -c "${COMMAND}" )
+else
+    COMMAND_LINE=(docker-compose run "${DOCKER_RUN_NO_TTY}" app sh -c "${COMMAND}")
+fi
+#echo "COMMAND  : "docker-compose run ${DOCKER_RUN_NO_TTY} app sh -c "$COMMAND"
+echo "${COMMAND}"
+echo "${COMMAND_LINE[@]}"
 echo "----------------------------------------------------------------------"
-docker-compose run --rm ${DOCKER_RUN_NO_TTY} app sh -c "$COMMAND"
-
+${COMMAND_LINE[@]}
+#docker-compose run --rm ${DOCKER_RUN_NO_TTY} app                            sh -c "$COMMAND"
+#docker         run --rm                      recipe-app-api-no-postgres_app sh -c python manage.py test
 
