@@ -2,7 +2,7 @@
 
 function syntax() {
     local SYNTAX=(
-        "${BASH_SOURCE[0]} [ -a -d -c -C \"command\" -D \"dir1 dir2 ...\" -f -F -v LEVEL  ] [ dir1 dir2 ... ]"
+        "${BASH_SOURCE[0]} [ -a -d -c -C \"command\" -D \"dir1 dir2 ...\" -f -F -T -v LEVEL  ] [ dir1 dir2 ... ]"
         "-a: all test dirs"
         "-d: default test dirs"
         "-c: clear terminal"
@@ -11,6 +11,7 @@ function syntax() {
         "-h: this help"
         "-f: enable flake8"
         "-F: run only flake8"
+        "-T: docker run -T: Disable pseudo-tty allocation."
         "-v: set verbose level (0-3)"
         "directories to test (override -a -d -D options)"
     )
@@ -30,10 +31,11 @@ VERBOSE=""
 FLAKE8=false
 ONLY_FLAKE8=false
 COMMAND=false
+DOCKER_RUN_NO_TTY=""
 #
 #   parse command line options
 #
-while getopts ":acC:D:dfFhv:" opt
+while getopts ":acC:D:dfFhTv:" opt
 do
 		case $opt in
 			a)
@@ -75,6 +77,10 @@ do
     		    echo "GETOPTS| -h: show syntax and exit"
                 syntax
                 exit 0
+            ;;
+            T)
+    		    echo "GETOPTS| -T: docker run, disable tty"
+                DOCKER_RUN_NO_TTY="-T"
             ;;
             v)
     		    #   enable verbose unit test
@@ -131,8 +137,8 @@ echo "ARGS     : ${*}"
 #
 #   run command
 #
-echo "COMMAND  : "docker-compose run app sh -c "$COMMAND"
+echo "COMMAND  : "docker-compose run ${DOCKER_RUN_NO_TTY} app sh -c "$COMMAND"
 echo "----------------------------------------------------------------------"
-docker-compose run app sh -c "$COMMAND"
+docker-compose run ${DOCKER_RUN_NO_TTY} app sh -c "$COMMAND"
 
 
