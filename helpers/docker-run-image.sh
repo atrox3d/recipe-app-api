@@ -11,4 +11,5 @@ fi
 
 #echo docker-compose run app sh -c "django-admin.py startproject ${PROJECT_NAME} ${PROJECT_PATH}"
 #docker-compose run app sh -c "django-admin.py startproject ${PROJECT_NAME} ${PROJECT_PATH}"
-docker run -it "${IMAGE}" sh -c "python manage.py test"
+echo docker run --rm "${IMAGE}" sh -c "python manage.py test"
+docker run --rm "${IMAGE}" sh -c "python manage.py test"
