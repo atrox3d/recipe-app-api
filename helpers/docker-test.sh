@@ -155,13 +155,13 @@ if [ ${DOCKER_COMPOSE} == false ]
 then
     COMMAND_LINE=(docker         run --rm "${IMAGE}"                 sh -c "${COMMAND}" )
 else
-    COMMAND_LINE=(docker-compose run "${DOCKER_RUN_NO_TTY}" app sh -c "${COMMAND}")
+    COMMAND_LINE=(docker-compose run ${DOCKER_RUN_NO_TTY} app sh -c "${COMMAND}")
 fi
 #echo "COMMAND  : "docker-compose run ${DOCKER_RUN_NO_TTY} app sh -c "$COMMAND"
 echo "${COMMAND}"
 echo "${COMMAND_LINE[@]}"
 echo "----------------------------------------------------------------------"
-${COMMAND_LINE[@]}
+"${COMMAND_LINE[@]}"
 #docker-compose run --rm ${DOCKER_RUN_NO_TTY} app                            sh -c "$COMMAND"
 #docker         run --rm                      recipe-app-api-no-postgres_app sh -c python manage.py test
 
