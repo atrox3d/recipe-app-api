@@ -7,8 +7,11 @@ from core import models
 
 # Register your models here.
 class UserAdmin(BaseUserAdmin):
+    # test_users_listed
     ordering = ['id']
     list_display = ['email', 'name']
+
+    # test_user_change_page
     fieldsets = (
         (
             None,
@@ -36,6 +39,17 @@ class UserAdmin(BaseUserAdmin):
             _('Important dates'),
             {
                 'fields': ('last_login', )
+            }
+        ),
+    )
+
+    # test_create_user_page
+    add_fieldsets = (
+        (
+            None,
+            {
+                'classes': ('wide',),
+                'fields': ('email', 'password1', 'password2')
             }
         ),
     )
